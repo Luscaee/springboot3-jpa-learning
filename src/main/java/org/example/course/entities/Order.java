@@ -15,6 +15,7 @@ import java.util.Set;
 @Table(name = "tb_order")
 public class Order implements Serializable {
 
+    // Atributes
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -34,6 +35,10 @@ public class Order implements Serializable {
     @OneToMany(mappedBy = "id.order")
     private Set<OrderItem> items = new HashSet<>();
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
+
+    // Constructors
     public Order() {
     }
 
@@ -44,6 +49,7 @@ public class Order implements Serializable {
         this.client = client;
     }
 
+    // Getters/setters
     public Long getId() {
         return id;
     }
@@ -78,10 +84,19 @@ public class Order implements Serializable {
         this.client = client;
     }
 
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
     public Set<OrderItem> getItems() {
         return items;
     }
 
+    // Hashcode/equals
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
