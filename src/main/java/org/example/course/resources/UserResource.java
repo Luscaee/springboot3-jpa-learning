@@ -7,8 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.sql.DataSource; // excluir com barra depois
 import java.net.URI;
+import java.sql.Connection; //
+import java.sql.SQLException; //
+import java.util.HashMap; //
 import java.util.List;
+import java.util.Map; //
 
 @RestController
 @RequestMapping(value = "/users")
@@ -46,5 +51,23 @@ public class UserResource {
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj) {
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
+    }
+
+    @Autowired
+    private DataSource dataSource;
+
+    @GetMapping("/debug-db-connection")
+    public ResponseEntity<Map<String, String>> getDbConnectionDetails() {
+        Map<String, String> details = new HashMap<>();
+        try (Connection connection = dataSource.getConnection()) {
+            String jdbcUrl = connection.getMetaData().getURL();
+            String userName = connection.getMetaData().getUserName();
+            details.put("DATABASE_URL", jdbcUrl);
+            details.put("DATABASE_USER", userName);
+            return ResponseEntity.ok(details);
+        } catch (SQLException e) {
+            details.put("error", e.getMessage());
+            return ResponseEntity.status(500).body(details);
+        }
     }
 }
