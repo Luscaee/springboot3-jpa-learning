@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,19 +20,23 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+    @Transactional(readOnly = true)
     public List<User> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public User findById(Long id) {
         Optional<User> obj = repository.findById(id);
         return obj.orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
+    @Transactional
     public User insert(User obj) {
         return repository.save(obj);
     }
 
+    @Transactional
     public void delete(Long id) {
         try {
             repository.deleteById(id);
@@ -42,6 +47,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public User update(Long id, User obj) {
         try {
             User entity = repository.getReferenceById(id);
