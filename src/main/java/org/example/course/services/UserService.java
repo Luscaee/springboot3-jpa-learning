@@ -33,6 +33,7 @@ public class UserService {
 
     @Transactional
     public User insert(User obj) {
+        obj.setId(null);
         return repository.save(obj);
     }
 
